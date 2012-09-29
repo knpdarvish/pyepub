@@ -1,0 +1,12 @@
+{ "bib": [
+{ "author":"ˈAṭṭār, Naishāburi Farido'd-Din.", "title":"Asrār-nāma", "abbrev":"AN", "editor":"Sayyed Ṣādeq Gaurharin.", "published":"Tehran, 1959"},
+{ "author":"ˈAṭṭār, Naishāburi Farido'd-Din.", "title":"Diwān-e qasā'ed wa tarji'āt wa ghazaliyāt.", "editor":"Sa'id Nafisi.", "published":"Tehran, 1960"},
+{ "author":"ˈAṭṭār, Naishāburi Farido'd-Din.", "title":"Moṣibat-nāma.", "abbrev":"MN", "editor":"Nurani Wesal.", "published":"Tehran, 1977."},
+{ "author":"ˈAṭṭār, Naishāburi Farido'd-Din.", "title":"Tadhkerat al-auliā'.", "abbrev":"TA", "editor":"Moḥammad Este'lami.", "published":"Tehran, 1975."},
+{ "author":"Jahangiri, Mohsen.", "title":"Mohye'd-Din ebn al-'Arabi.", "published":"Tehran, 1980.", "abbrev" : "EA" },
+{ "author":"Jāmi, Abdo'r-Raḥmān.", "title":"Diwān-e kāmel-e Jāmi.", "editor":"Hāshem Rāḍhi.", "published":"Tehran, 1962."},
+{ "author":"Jāmi, Abdo'r-Raḥmān.", "title":"Haft aurang.", "abbrev":"HAU", "editor":"Mortaḍhā Gilāni.", "published":"Tehran, 1978."},
+{ "author":"Jāmi, Abdo'r-Raḥmān.", "title":"Nafaḥāt al-ons.", "abbrev":"NFO", "editor":"Mehdi Tauḥidipur.", "published":"Tehran, 1964."},
+{ "author":"Zu’l-Navvar, Raḥim.", "title":"Dar jostajuye Ḥāfeẓ. 2 vols.", "published":"Tehran, 1983."}
+]
+}

@@ -1,0 +1,136 @@
+@namespace h "http://www.w3.org/1999/xhtml";
+@font-face {
+	font-family : Iowan;
+	font-weight : normal;
+	font-style  : normal;
+}
+
+/* not sure this is doing anything but leave for now */
+body {
+	font-family : Iowan;
+	widows: 0;
+	orphans: 0
+}
+
+/* Default line */
+.default {
+	font-family : Iowan;
+    text-align: justify;
+	margin-top: 0;
+	margin-bottom: 0;
+	padding-top: 0.2em;
+	padding-bottom: 0.2em;
+    text-indent: 0
+}
+
+/* Standard indented paragraph */
+.par {
+	font-family : Iowan;
+    text-align: justify;
+	margin-top: 0;
+	margin-bottom: 0;
+	padding-top: 0.2em;
+	padding-bottom: 0.2em;
+    text-indent: 4%
+}
+
+/*  paragraph with left/right margins  */
+.ind {
+	font-family : Iowan;
+    margin-left: 4%;
+    margin-right: 5%;
+	margin-top: 0;
+	margin-bottom: 0;
+	padding-top: 0.2em;
+	padding-bottom: 0.2em;
+    text-align: justify;
+    text-indent: 0
+}
+
+.popup {
+	color : blue;
+}
+
+/* Italicized words */
+em { 
+	/*	color: blue;  debug */
+	font-family : Iowan;
+	font-style: italic; 
+}
+
+span.em{
+	font-family : Iowan;
+	font-style: italic; 
+}
+h1 {
+	font-family : Iowan;
+	text-align: center; 
+}
+
+.center { 
+	font-family : Iowan;
+	text-align: center; }
+
+
+
+.poem { 
+	font-family : Iowan;
+	/* color: red;  for debug */
+	margin: 0;   /* ? */
+	padding : 0; /* ? */
+    font-style: italic; 
+	white-space: -pre-wrap;
+	/* use these for indented poems */
+    font-size: smaller; 
+    margin-left: 15%; 
+	text-indent: -15%
+}
+/* Poet after verse/poem */
+.poet {
+	font-family : Iowan;
+	margin: 0;
+	padding: 0;
+    font-style: italic; 
+	text-indent: 40%;
+	font-size: smaller; 
+}
+
+/* For Figures */
+div.images, img, div.images p.image-caption {
+	font-family : Iowan;
+	margin: 0 auto; padding: 0; text-align: center; font-style: italic; font-size: 90%; 
+} 
+div.images { overflow: auto; } 
+div.images, img { max-height: 99%; max-width: 99%; clear: both; } 
+div.images p.image-caption { margin-bottom: 1em; } 
+
+/* For Centers & Other books */
+li {
+	font-family : Iowan;
+	margin-top: 0.25em;
+}
+
+/* Same as poet but without leading - */
+.ref {
+	font-family : Iowan;
+	margin: 0;
+	padding: 0;
+    font-style: italic; 
+	text-align: center;
+	font-size: smaller; 
+}
+.under { text-decoration: underline; }
+
+.book_ref { 
+    -moz-column-count:4; 
+    -webkit-column-count:2; 
+    column-count:1;
+	margin-left: 8%; 
+}
+
+.references {
+    -moz-column-count:4; 
+    -webkit-column-count:2; 
+    column-count:1;
+}
+

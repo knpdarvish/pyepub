@@ -1,0 +1,4 @@
+Run 
+python ../epub3_utils.py pyepub.cfg
+or
+python ../pyepub.py for GUI version

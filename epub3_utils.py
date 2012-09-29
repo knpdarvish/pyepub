@@ -1,9 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #
-#
-#
-
 import re,sys,fileinput
 import operator
 import commands
@@ -18,25 +15,6 @@ import codecs
 import unicodedata
 import uuid
 
-"""
-Welcome to Epub3 Creator.
-
-this is the input file format........
-First char of line : Meaning .......
-char     Paragraph type
-TAB      indent 1st character
-TAB+TAB  indent whole paragraph
-%        Poem
-u'—'     Poet of Book attribution
-\.../    Pic
-|..|..|  Table
-<[0-9]>  heading type
-<c>      Center line
-*        Italic line?
-+        Page break
-†        Footnote
-!...}    Right-to-left Poem
-"""
 
 start_blue = '\033[34m'
 start_red = '\033[31m'
@@ -623,10 +601,10 @@ default_cfg = """\
 "cover photo":"",
 "copyright":"Copyright @ 2012 Me",
 "subject":"Ebooks",
-"date":"2012",
+"date":"2010",
 "revision":"",
 "description":"How to make epub3",
-"isbn":"0-933996-XX-X", 
+"isbn":"0-933546-XX-X", 
 "rights":"All rights reserved. No part of this publication may be reproduced, stored in a retrieval system, or transmitted in any form or by any means, electronic, mechanical photocopying, recording, or otherwise, without prior permission of the copyright owner."
 },
 {
@@ -1188,6 +1166,7 @@ def md_to_xhtml(book_dict,logfile=None):
 	unicode_dict = {} # unicode index
 	roman_dict = {} # romanic link dictionary
 	abbrev_dict = {} # abbrev link dictionary
+	abbrev_lookup = {} # abbrev
 	name_dict = {} # name index
 
 	ftnlist = [] # footnote list
@@ -1217,12 +1196,12 @@ def md_to_xhtml(book_dict,logfile=None):
 
 	all_content = ''
 
-	x = commands.getstatusoutput('git shortlog -s')
-	# x[1] should be like "   1  First Lastname"
-	ver_s = string.split(x[1])
-	ver = string.strip(ver_s[0])
-	#print x,ver_s,ver
-	#ver = '1(?)'
+	if (os.path.isdir(".git")):
+		x = commands.getstatusoutput('git shortlog -s')
+		ver_s = string.split(x[1])
+		ver = string.strip(ver_s[0])
+	else:
+		ver = "0"
 
 	############################################
 	# Abbreviations
@@ -1230,7 +1209,8 @@ def md_to_xhtml(book_dict,logfile=None):
 	biblio_dict = biblio_proc(biblio_filename,abbrev_file,biblio_file)
 
 	# Create new dict with abbreviations as keys and titles as values
-	abbrev_lookup = biblio_abbrev(biblio_dict)
+	if (biblio_dict):
+		abbrev_lookup = biblio_abbrev(biblio_dict)
 	############################################
 	# Copy Titles, Abbrevs,
 	############################################

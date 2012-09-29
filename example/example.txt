@@ -1,0 +1,123 @@
+<1>EXAMPLE EPUB3 BOOK
++
+TITLE BANNER (example of page breaks)
++
+
+<1>Preface
+In the following pages an attempt has been made to analyse and determine the nature of Love as understood in a sublime sense. So far as I know, there is no book or treatise of this kind extant either in English, Persian or Urdu. The works of eminent Sufis on Love reflect their own lofty experiences and sentiments and intuitive feelings.
+Here, an attempt has been made to explain the quiddity of love. If ardent love (‘Ishq) is the name given to excessive affection, what stages has it to traverse to reach the pinnacle? Details could be gleaned from lovers only, but, in the language of emotions, I have presented, here, their findings rather comprehensively, having discovered them by taste and personal experience and I have striven to present them in simple language.
+
+It is now well known how love is prompted in human heart and what the causes or stimuli of love are. Beauty, benevolence, perfection of every kind and mutual affinities are all the stimuli of love. They alone fan its flame. Love is innate, inborn in human nature. It is a boon conferred by the Eternal Dispenser, and is a divine gift. No heart is void of it. External stimuli fan the flame of love and when it flares up man does all that lies in his power; his inward potential perfections come into play, are actualised? they reach their climax, and man realises the highest end of his life—his ultimo Thule.
+
+God alone, in the real sense, deserves our love. He alone is in possession of Beauty, Benevolence and every kind of perfection to the highest degree. His Being alone is the most perfect and His attributes only are exempt from every defect or blemish. Every other thing besides Him is only a created, a contingent being, and as such limited and determined, deprived of absoluteness and void of infinite perfection. Whatever perfection is found in a created being can only be a limited one, it does not belong to its essence, per se, it is only a borrowed one, a transitory phase of his ephemeral existence! Auspicious is the soul that has assured itself of this truth and regards God alone as its Real Beloved, and abstracting himself from all but God spends the few days of his life in His love only and thus attains supreme beatitude. As Jāmī has said 
+
+%Perchance with wealth and sons endowed thou art, 
+%Yet with all these ere long thou wilt hare to part,
+%Thrice happy he who gives his heart to love,
+%And sets affection on the men of heart.
+—Jāmī
+—(HAU 1)
+
+But, this is also an admitted fact that the Absolute can manifest Itself in the phenomenal only. The Absolute, in its Essence, is "Unseen." None can behold it to be enamoured of It. When Absolute Beauty and Absolute Perfection are not perceptible to outward eye, and their manifestation could be beheld in phenomenal forms alone, it is, then necessary to see the forms with the outward eye. This observation, however, is for the sake of intuiting the Absolute Reality manifesting Itself through them, and is never for the sake of the forms themselves. This subtle point has been expressed clearly by an ardent lover, Auḥad-ud-dīn Kirmānī thus:
+
+%The meaning themselves are not clear,
+%   They are manifest in a dead form.
+%        When form is the rising place of Beauty,
+%            Necessarily, I behold the form!
+
+% Example of a footnote†
+
+† Footnote will be popup in ibooks and hidden in book
+
+Pure souls behold with their inward eye, Absolute Beauty alone in all lovely phenomenal forms. This beholding of forms takes them to Absolute Beauty alone and they seek and love It only. The same sense is conveyed by the aphorism:
+
+"The phenomenal is a bridge to the Real." 
+
+To deny its truth is synonymous with ignorance—abysmal ignorance. An exhaustive treatment of this subject is given in the chapter on Sensory Love of the present work.
+
+	Allah loves them and they love Allah. (IV:57)
+
+<1> Heading Level 1 with 3 paragraph types
+
+This is a regular paragraph (green). In ridiculing the geocentric system of astronomy expounded by Claudius Ptolemy, modem astronomers have overlooked the philosophic key to the Ptolemaic system. The universe of Ptolemy is a diagrammatic representation of the relationships existing between the various divine and elemental parts of every creature, and is not concerned with astronomy as that science is now comprehended. In the above figure, special attention is called to the three circles of zodiacs surrounding the orbits of the planets. These zodiacs represent the threefold spiritual constitution of the universe. The orbits of the planets are the Governors of the World and the four elemental spheres in the center represent the physical constitution of both man and the universe, Ptolemy's scheme of the universe is simply a cross section of the universal aura, the planets and elements to which he refers having no relation to those recognized by modern astronomers.
+
+	Indented first line of paragraph (pink). German philosophy had its inception with Gottfried Wilhelm von Leibnitz, whose theories are permeated with the qualities of optimism and idealism. Leibnitz's criteria of sufficient reason revealed to him the insufficiency of Descartes' theory of extension, and he therefore concluded that substance itself contained an inherent power in the form of an incalculable number of separate and all-sufficient units.
+
+		Indented paragraph on both sides (yellow). Matter reduced to its ultimate particles ceases to exist as a substantial body, being resolved into a mass of immaterial ideas or metaphysical units of power, to which Leibnitz applied the term monad. Thus the universe is composed of an infinite number of separate monadic entities unfolding spontaneously through the objectification of innate active qualities. All things are conceived as consisting of single monads of varying magnitudes or of aggregations of these bodies, which may exist as physical, emotional, mental, or spiritual substances. God is the first and greatest Monad; the spirit of man is an awakened monad in contradistinction to the lower kingdoms whose governing monadic powers are in a semi-dormant state.
+
+
+<1> Example with Figures with captions
+
+Matter reduced to its ultimate particles ceases to exist as a substantial body, being resolved into a mass of immaterial ideas or metaphysical units of power, to which Leibnitz applied the term monad. Thus the universe is composed of an infinite number of separate monadic entities unfolding spontaneously through the objectification of innate active qualities. All things are conceived as consisting of single monads of varying magnitudes or of aggregations of these bodies, which may exist as physical, emotional, mental, or spiritual substances. God is the first and greatest Monad; the spirit of man is an awakened monad in contradistinction to the lower kingdoms whose governing monadic powers are in a semi-dormant state.
+
+\ Example of Figure with Caption
+/
+
+According to legend, Diodorus died of grief because he could not answer instantly certain questions asked him by Stilpo, at one time master of the Megarian school. Diodorus held that nothing can be moved, since to be moved it must be taken out of the place in which it is and put into the place where it is not, which is impossible because all things must always be in the places where they are.
+
+
+\ Another Figure
+From Thomasin's Recuil des Figures, Groupes, Thermes, Fontaines, Vases et autres Ornaments.
+/
+
+According to legend, Diodorus died of grief because he could not answer instantly certain questions asked him by Stilpo, at one time master of the Megarian school. Diodorus held that nothing can be moved, since to be moved it must be taken out of the place in which it is and put into the place where it is not, which is impossible because all things must always be in the places where they are.
+
+
+<1> Heading 1 with no following text
+<2> Heading 2
+
+WHEN confronted with a problem involving the use of the reasoning faculties, individuals of strong intellect keep their poise, and seek to reach a solution by obtaining facts bearing upon the question.
+
+<3> Heading 3
+
+Below is a Table with 2 columns (following line is name of table)
+
+|Column| |
+|1|Names of the Hebrew letters.|
+|2|Samaritan Letters.|
+|3|Hebrew and Chaldean letters.|
+|4|Numerical equivalents of the letters.|
+|5|Capital and small Greek letters.|
+|6|The letters marked with asterisks are those brought to Greece from Phœnicia by Cadmus.|
+|7|Name of the Greek letters.|
+|8|Nearest English equivalents to the Hebrew, Greek, and Samaritan Letters.|
+Various Letter Systems
+
+<4> Heading 4
+
+Heading 4 text line
+
+<5> Heading 5
+
+Heading 5 text line
+
+* Should be italic line.......
+
+<6> Poems Examples with Heading 6
+{
+Example of a "poem",
+ Spacing is maintained - indent 1
+          Spacing is maintained - indent 2, note line wrap when shrinking
+ Spacing is maintained - indent 1
+ Next poem is for right-to-left languages.
+}
+—Author has different indentation because starts with —
+
+{{
+   Another poem example using {{ at start (why?)
+   		   	 Next poem is for right-to-left languages.
+}}
+
+
+<5> Title with unicode in paren (ḍḥṣṭẓ)
+!
+ازل تا ابد جان من یک دم است
+دمی فارغ از هر چه زیر و بم است
+دمی را که دارى غنيمت شمار
+به شادى بسر بر چه و قت غم است
+}
+
+
+<5> Another Title with unicode in paren (āīūḍḥ)
+
+
