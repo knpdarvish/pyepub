@@ -3306,22 +3306,58 @@ def todec(s):
     else:
         return 0
 
+# File name ".pkg" is just a zip file with all needed files to make epub using this software
+def process_pkg_file(fname,unzip_name):
+	zf = zipfile.ZipFile(fname)
+	os.mkdir(unzip_name)
+	for name in zf.namelist():
+		name_plus = unzip_name+"/"+name
+		if name.endswith('/'):
+			if not os.path.exists(name_plus):
+				os.mkdir(name_plus)
+	for i, name in enumerate(zf.namelist()):
+		name_plus = unzip_name+"/"+name
+		if not name.endswith('/'):
+			outfile = open(name_plus, "wb")
+			outfile.write(zf.read(name))
+			outfile.flush()
+			outfile.close()
+			if name.endswith('.cfg'):
+				cfg_name = name
+	return(cfg_name)
+
+
 if __name__ == '__main__':
     if (len(sys.argv) > 1):
         fname = sys.argv[1]
         if (os.path.isfile(fname)):
-            s = utffile2str(fname)
-            global_cfg = json.loads(s)
-            md_to_xhtml(global_cfg['config'])
-	    try:
-		    epubcheck_cmd = global_cfg['config'][1]['run_epubcheck']
-		    cmd = epubcheck_cmd+" "+global_cfg['config'][2]['output']
-		    print "Running Epubcheck...",cmd
-		    (status,output) = commands.getstatusoutput(cmd)
-		    print output
-		    sys.exit(status)
-	    except:
-		    pass
+		iszip = re.compile(".pkg")
+		using_pkg = False
+		cfg_name = None
+		if iszip.search(fname):
+			using_pkg = True
+			(root,ext) = fname.split(".pkg")
+			unzip_name = root+"_unzipped"
+			if (os.path.isdir(unzip_name)):
+				print unzip_name+" already exists, please run from there using .cfg file"
+			else:
+				cfg_name = process_pkg_file(fname,unzip_name)
+				if (cfg_name):
+					fname = cfg_name
+					os.chdir(unzip_name)
+		if ((using_pkg and cfg_name) or not using_pkg):
+			s = utffile2str(fname)
+			global_cfg = json.loads(s)
+			md_to_xhtml(global_cfg['config'])
+			try:
+				epubcheck_cmd = global_cfg['config'][1]['run_epubcheck']
+				cmd = epubcheck_cmd+" "+global_cfg['config'][2]['output']
+				print "Running Epubcheck...",cmd
+				(status,output) = commands.getstatusoutput(cmd)
+				print output
+				sys.exit(status)
+			except:
+				pass
         else:
             print fname,"not found"
     else:
