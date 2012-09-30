@@ -1206,7 +1206,7 @@ def md_to_xhtml(book_dict,logfile=None):
 	############################################
 	# Abbreviations
 	############################################
-	biblio_dict = biblio_proc(biblio_filename,abbrev_file,biblio_file)
+	biblio_dict = biblio_proc(biblio_filename,use_abbrev,abbrev_file,biblio_file)
 
 	# Create new dict with abbreviations as keys and titles as values
 	if (biblio_dict):
@@ -2453,7 +2453,7 @@ def conv_rawfiles(flist):
 
 
 # input file, out abbreviation file, output biblio filename (for use in abbrev file)
-def biblio_proc(bibfile,abrfile,obfile=""):
+def biblio_proc(bibfile,use_abbrev,abrfile,obfile=""):
 	abb = []
         (root,sfile) = os.path.split(obfile)
 	s = utffile2str(bibfile)
@@ -2473,7 +2473,9 @@ def biblio_proc(bibfile,abrfile,obfile=""):
 
 		l = ''
 		for line in out:	l += line
-		mkgenhtml(abrfile,l)
+		if (use_abbrev): 
+			print "Creating Abbreviation file",abrfile
+			mkgenhtml(abrfile,l)
 		return(biblio_dict)
 	else:
 		return(None)
