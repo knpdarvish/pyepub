@@ -1492,6 +1492,11 @@ def md_to_xhtml(book_dict,logfile=None):
 		(title_form,title) = title_proc(attr_dict,title_file,all_content,ver)
 	else:
 		(title_form,title) = title_proc(attr_dict,title_file,'',ver)
+		if 'title' in filemap:
+			PY = open(title_file,"w")
+			PY.write(title_form.encode('utf-8'))
+			PY.close()
+			
 	############################################
 	# Make Table of Contents file 'toc_file'
 	############################################
@@ -3152,19 +3157,9 @@ def title_proc(title,tfile,content,ver):
 				"time" : t.strftime("%Y-%m-%d at %H:%M:%S"),
 				"css" : "css/main.css"} )
 		#for k,n in biblio_dict.iteritems(): print k, ":", n
-		if(content==''):
-			PY = open(tfile,"w")
-			PY.write(st.encode('utf-8'))
-			PY.close()
 		ss = xhtml_hdr.substitute( { 
 				'title' : title['title'], 
 				"css" : "css/main.css"} )
-		# PO not used? - revive if needed
-		#PO = open(ohtmfile,"w")	
-		#PO.write(re_utf(ss))
-		#PO.write("</body>\n</html>\n")
-		#PO.close()
-		#
 		return(st,title)
 	else:
 		return('')
