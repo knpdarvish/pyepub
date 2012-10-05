@@ -1036,7 +1036,7 @@ def md_to_xhtml(book_dict,logfile=None):
         use_name_index  = check_attr(opts_dict,'use_nameref')
         use_index = check_attr(opts_dict,'use_wordref')
         use_phrases = check_attr(opts_dict,'use_wordref')
-        use_sorted_contents = check_attr(opts_dict,'use_sorted_toc')
+        use_sorted_toc     = check_attr(opts_dict,'use_sorted_toc')
         use_sorted_unicode = check_attr(opts_dict,'use_sorted_unicode')
         use_biblio = check_attr(opts_dict,'use_biblio')
         use_bookref = check_attr(opts_dict,'use_bookref')
@@ -1052,6 +1052,37 @@ def md_to_xhtml(book_dict,logfile=None):
         css_filename      = cfg_dict['css']
 
 	filemap           = cfg_dict['filemap']
+
+	# Check filemap vs options integrity
+	if (use_biblio and ('biblio' not in filemap)) or \
+		    (not use_biblio and ('biblio' in filemap)):
+		print "biblio and use_biblio not in sync"
+		sys.exit(1)
+
+	if (use_bookref and ('bookref' not in filemap)) or \
+		    (not use_bookref and ('bookref' in filemap)):
+		print "bookref and use_bookref not in sync"
+		sys.exit(1)
+
+	if (use_abbrev and ('abbrev' not in filemap)) or \
+		    (not use_abbrev and ('abbrev' in filemap)):
+		print "abbrev and use_abbrev not in sync"
+		sys.exit(1)
+	
+	if (use_sorted_toc and ('sorted_toc' not in filemap)) or \
+		    (not use_sorted_toc and ('sorted_toc' in filemap)):
+		print "sorted_toc and use_sorted_toc not in sync"
+		sys.exit(1)
+
+	if (use_sorted_unicode and ('sorted_unicode' not in filemap)) or \
+		    (not use_sorted_unicode and ('sorted_unicode' in filemap)):
+		print "sorted_unicode and use_sorted_unicode not in sync"
+		sys.exit(1)
+
+	if (use_figures and ('figures' not in filemap)) or \
+		    (not use_figures and ('figures' in filemap)):
+		print "figures and use_figures not in sync"
+		sys.exit(1)
         # ?
 
 	if (not os.path.isfile(headings_file)): 
@@ -1144,7 +1175,7 @@ def md_to_xhtml(book_dict,logfile=None):
 		print "headings file ",headings_file, "not found -> using default headings"
 		filedict = json.loads(default_headings)
 	# Get 'filemap' for what is included in EPUB
-        if (filemap == ""): filemap = ['title','main']
+        if (filemap == ""): filemap = ['main']
 
         print "Epub file/page order (main==book chapters): "
 	for f in filemap: print "\t\t\t",f
@@ -1398,7 +1429,7 @@ def md_to_xhtml(book_dict,logfile=None):
 	# Sorted contents
 	############################################
 
-	if(use_sorted_contents): 
+	if(use_sorted_toc): 
 		s = create_sorted_contents(scontent_list,chaptername)
 		all_content +=	mkgen(sorted_file,s)
 
