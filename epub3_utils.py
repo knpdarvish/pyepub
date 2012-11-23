@@ -889,32 +889,14 @@ ver_type = " "
 
 debug = False
 
-def zip_try(dir, zip_file):
+def zip_files(dir, zip_file):
     os.chdir('efiles')
-    with zipfile.ZipFile(zip_file, 'w') as zip:
+    with zipfile.ZipFile(zip_file, 'w', compression=zipfile.ZIP_DEFLATED) as zip:
         for root, dirs, files in os.walk("."):
             for file in files:
                 fpath = os.path.join(root, file)
-                zip.write(fpath)
+                zip.write(fpath, compress_type=zipfile.ZIP_DEFLATED)
     os.chdir('..')
-
-def zipper(dir, zip_file):
-    zip = zipfile.ZipFile(zip_file, 'w', compression=zipfile.ZIP_DEFLATED)
-    zip = zipfile.ZipFile(zip_file, 'w', compression=zipfile.ZIP_DEFLATED)
-    #os.chdir(dir)
-    root_len = len(os.path.abspath(dir))
-    for root, dirs, files in os.walk(dir):
-        archive_root = os.path.abspath(root)[root_len:]
-        for f in files:
-            fullpath = os.path.join(root, f)
-            archive_name = os.path.join(archive_root, f)
-            a_name = os.path.join(root, f)
-            print fullpath,archive_name,f
-            zip.write(fullpath, archive_name, zipfile.ZIP_DEFLATED)
-            #zip.write(fullpath, archive_name)
-    zip.close()
-    #os.chdir('..')
-    return zip_file
 
 def check_attr(cfgd,name,filem=None):
 	key = check_key(cfgd,name)
@@ -1619,7 +1601,7 @@ def md_to_xhtml(book_dict,logfile=None):
 	if (debug): str2utffile(unused_items,dbfile)
 	#print unused_items
 	#zipper('efiles',outputfile)
-	zip_try('efiles','../'+output_filename)
+	zip_files('efiles','../'+output_filename)
 	if (debug_efiles):
             print "keeping efiles..."
         else:
