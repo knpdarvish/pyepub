@@ -15,7 +15,6 @@ import codecs
 import unicodedata
 import uuid
 
-
 start_blue = '\033[34m'
 start_red = '\033[31m'
 start_bold_red = '\033[31;1m'
@@ -34,6 +33,7 @@ def use_ascii():
 # get ext
 ext = re.compile('\.\w+')
 the = re.compile('(The )|(THE )')
+indef = re.compile('(a )|(A )')
 auth = re.compile('Author:')
 reg  = re.compile('^<\w')
 ireg  = re.compile('(<[a-z]+>)|(</[a-z]+>)')
@@ -103,6 +103,7 @@ debug_parse = False
 debug_break = False
 debug_toc = False
 
+# if having issues with this, set "extra_text" to None and download http://www.unicode.org/Public/UCA/latest/allkeys.txt and include in same directory as this script
 extra_text = """\
 0000  ; [.0000.0000.0000.0000] # [0000] NULL (in 6429)
 0001  ; [.0000.0000.0000.0000] # [0001] START OF HEADING (in 6429)
@@ -341,9 +342,6 @@ extra_text = """\
 
 xml_hdr = """\
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE ncx PUBLIC
-     "-//NISO//DTD ncx 2005-1//EN"
-     "http://www.daisy.org/z3986/2005/ncx-2005-1.dtd">
 <ncx version="2005-1"    xml:lang="en"   xmlns="http://www.daisy.org/z3986/2005/ncx/">
 <!-- This file Copyright 2012 created by epub3_utils.py -->
 """
@@ -418,11 +416,14 @@ title_form = string.Template("""\
 
 </head> 
 <body>
-<p>Cover design : ${coverdesign}</p>
+<p>${coverdesign}</p>
 <p>${coverphoto}</p>
 <p>${translators}</p>
 <p>${design}</p>
-<p>ISBN : ${isbn}</p>
+<p>${isbn}</p>
+<p>${publisher}</p>
+<p>${web}</p>
+<p>${software}</p>
 <p>Version 1.${ver} created on ${time}</p>
 <p>${ver_type}</p>
 <p>${extra}</p>
@@ -433,8 +434,9 @@ ${content}
 
 content_form=string.Template("""\
 <?xml version="1.0" encoding="UTF-8" ?>
-<package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="uuid">
-  <metadata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:opf="http://www.idpf.org/2007/opf" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:calibre="http://calibre.kovidgoyal.net/2009/metadata" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<package xmlns="http://www.idpf.org/2007/opf" unique-identifier="uuid" version="3.0" 
+prefix="ibooks: http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0/">
+<metadata xmlns:opf="http://www.idpf.org/2007/opf" xmlns:dc="http://purl.org/dc/elements/1.1/">
 <dc:identifier id="ISBN">${isbn}</dc:identifier>
 <dc:identifier id="uuid">urn:uuid:${uniq}</dc:identifier>
 <dc:title>${title}</dc:title>
@@ -445,10 +447,11 @@ content_form=string.Template("""\
 <dc:rights>${copyright}</dc:rights>
 <dc:subject>${subject}</dc:subject>
 <meta property="dcterms:modified">${time}</meta>
+<meta property="ibooks:version">1.0.${ver}</meta>
 <!-- Version 1.${ver} created on ${time} -->
 <!-- needed for mobi conversion -->
 <meta name="cover" content="img_cover" />        
-<!-- This file Copyright 2012 created by epub3_utils.py -->
+<!-- This file Copyright 2012 created by epub3_utils.py ${scr_ver} -->
 </metadata>
 <manifest>
 
@@ -476,10 +479,6 @@ ${file_items}
 
 toc_form=string.Template("""\
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE ncx PUBLIC
-     "-//NISO//DTD ncx 2005-1//EN"
-     "http://www.daisy.org/z3986/2005/ncx-2005-1.dtd">
-
 <ncx version="2005-1"    xml:lang="en"   xmlns="http://www.daisy.org/z3986/2005/ncx/">
 
 <head>
@@ -918,11 +917,19 @@ def zipper(dir, zip_file):
     return zip_file
 
 def check_attr(cfgd,name,filem=None):
-    if (cfgd[name] != ""):
-        if (filem): filem.append(name)
-        return(True)
-    else:
-        return(False)
+	key = check_key(cfgd,name)
+	if (key):
+		if (filem): filem.append(name)
+		return(True)
+	else:
+		return(False)
+
+def check_key(cfgd,name):
+	try:
+		key = cfgd[name]
+	except:
+		key = None
+	return(key)
     
 
 # a simple class with a write method
@@ -961,19 +968,8 @@ def capitalize_english(l):
 	    else:
 		    s1 += w+' '
 
-    s = re.sub(ur'’S',ur'’s',s1)
+    s = re.sub(ur'’(\w)',lambda m: m.group(0).lower(),s1)
     return(s)
-
-def capitalize_english1(l):
-    #flet = re.compile("\s\w")
-    if fpar.search(l):
-        t = l.title()
-        #print t
-        (eng,far) = t.rsplit("(",1)
-        t = eng + "(" + far.lower()
-        return(t)
-    else:
-        return(l)
 
 def read_config(fname):
     if (os.path.isfile(fname)):
@@ -994,7 +990,7 @@ def md_to_xhtml(book_dict,logfile=None):
         attr_dict = book_dict[0]
         opts_dict = book_dict[1]
         cfg_dict = book_dict[2]
-        if (opts_dict['sample'] != ""): sample = 1
+        sample = check_key(attr_dict,'use_sample')
 	sample_modulo  = 6
 	sample_last    = 5
 	# if index_size is > than this, break apart into smaller chunks
@@ -1018,6 +1014,7 @@ def md_to_xhtml(book_dict,logfile=None):
 		# it only contains text in the main ".txt" file
 		alfile = "efiles/OPS/single.xhtml"
 	else:
+		print "separate files"
 		alfile = None
 
         try:
@@ -1028,7 +1025,12 @@ def md_to_xhtml(book_dict,logfile=None):
             print "lev_break, enough_lines and lev_toc must be integers!, exiting!"
             sys.exit()
         # only put in TOC if less than this!!!
-        full_unicode = (opts_dict['unicode'] != "")
+
+        no_unicode = check_attr(opts_dict,'ascii')
+        if (no_unicode):  use_ascii()
+
+	script_ver = cfg_dict['script_ver']
+	#print "SCRIPT VER = ",script_ver
         # lines before new file forced. This is estimated to keep size from getting too big
 
         use_italics = check_attr(opts_dict,'use_italics')
@@ -1042,13 +1044,18 @@ def md_to_xhtml(book_dict,logfile=None):
         use_bookref = check_attr(opts_dict,'use_bookref')
         use_abbrev = check_attr(opts_dict,'use_abbrev')
         use_figures = check_attr(opts_dict,'use_figures')
-        if (not full_unicode):  use_ascii()
+	use_headings = check_attr(cfg_dict,'headings')
         
 	# files
         input_filename    = cfg_dict['input']
         output_filename   = cfg_dict['output']
-	biblio_filename   = cfg_dict['biblio']
-	headings_file     = cfg_dict['headings']
+	if (use_biblio):
+		biblio_filename   = cfg_dict['biblio']
+	if (use_headings):
+		headings_file     = cfg_dict['headings']
+	else:
+		headings_file = ''
+
         css_filename      = cfg_dict['css']
 
 	filemap           = cfg_dict['filemap']
@@ -1214,7 +1221,7 @@ def md_to_xhtml(book_dict,logfile=None):
 	sorted_file   = "efiles/OPS/sorted_toc.xhtml"
 	usorted_file  = "efiles/OPS/sorted_unicode.xhtml"
 	toc_file      = "efiles/OPS/toc.ncx"
-	toc2_file     = "efiles/OPS/toc.xhtml"
+	toc3_file     = "efiles/OPS/toc.xhtml"
 	content_file  = "efiles/OPS/content.opf"
 	roman_file    = "efiles/OPS/romanref.xhtml"
 	fig_file      = "efiles/OPS/figures.xhtml"
@@ -1237,11 +1244,12 @@ def md_to_xhtml(book_dict,logfile=None):
 	############################################
 	# Abbreviations
 	############################################
-	biblio_dict = biblio_proc(biblio_filename,use_abbrev,abbrev_file,biblio_file)
+	if (use_biblio):
+		biblio_dict = biblio_proc(biblio_filename,use_abbrev,abbrev_file,biblio_file)
 
-	# Create new dict with abbreviations as keys and titles as values
-	if (biblio_dict):
-		abbrev_lookup = biblio_abbrev(biblio_dict)
+		# Create new dict with abbreviations as keys and titles as values
+		if (biblio_dict):
+			abbrev_lookup = biblio_abbrev(biblio_dict)
 	############################################
 	# Copy Titles, Abbrevs,
 	############################################
@@ -1253,10 +1261,12 @@ def md_to_xhtml(book_dict,logfile=None):
 	# Note everything in here should be lowercase!!! or it won't work!!!!!
 	phr = utffile2list("phrases.txt")
 
-
 	# get index from file
-	name_index = utffile2list(cfg_dict['nameref'])
-	word_index = utffile2list(cfg_dict['wordref'])
+	if (use_name_index):
+		name_index = utffile2list(cfg_dict['nameref'])
+
+	if (use_index or use_phrases):
+		word_index = utffile2list(cfg_dict['wordref'])
 
 	#new_names = []
 	#for ix in name_index:
@@ -1271,8 +1281,7 @@ def md_to_xhtml(book_dict,logfile=None):
 	end_tr  = re.compile('</tr>')
 
 	phr_noparen = []
-	for p in phr:
-		phr_noparen.append(pw.sub("",p))
+	for p in phr: phr_noparen.append(pw.sub("",p))
 
 	#print phr_noparen
 
@@ -1520,9 +1529,9 @@ def md_to_xhtml(book_dict,logfile=None):
 	# Create title.xhtml + header for main file
 	############################################
 	if(alfile):
-		(title_form,title) = title_proc(attr_dict,title_file,all_content,ver)
+		(title_form,title) = title_proc(attr_dict,title_file,all_content,ver.script_ver)
 	else:
-		(title_form,title) = title_proc(attr_dict,title_file,'',ver)
+		(title_form,title) = title_proc(attr_dict,title_file,'',ver,script_ver)
 		if 'title' in filemap:
 			PY = open(title_file,"w")
 			PY.write(title_form.encode('utf-8'))
@@ -1533,7 +1542,8 @@ def md_to_xhtml(book_dict,logfile=None):
 	############################################
 	uniq = mktoc(alfile,toc_file,title,ver,content_list,filemap,filedict,lev_toc)
 
-	uniq2 = mknav(alfile,toc2_file,title,ver,content_list,filemap,filedict,lev_toc)
+	# Epub3 version
+	uniq3 = mknav(alfile,toc3_file,title,ver,content_list,filemap,filedict,lev_toc)
 	
 	if (use_random):
 		mkrand(random_file,content_list)
@@ -1559,7 +1569,7 @@ def md_to_xhtml(book_dict,logfile=None):
 	############################################
 	# Make Contents file 'content_file'
 	############################################
-	mkcontent(alfile,content_file,filelist,jpeglist,jslist,headings,title,ver,uniq)
+	mkcontent(alfile,content_file,filelist,jpeglist,jslist,headings,title,ver,script_ver,uniq)
 
 
 	############################################
@@ -1585,7 +1595,7 @@ def md_to_xhtml(book_dict,logfile=None):
 		#print "Not using phrase index"
 
 	if (use_index):
-		not_used_index = check_usage(word_index,unicode_dict)
+		(used_index,not_used_index) = check_usage(word_index,unicode_dict)
 		for p in not_used_index:
 			unused_items += p+"\n"
 			#print p, " index item not used!"
@@ -1595,10 +1605,12 @@ def md_to_xhtml(book_dict,logfile=None):
 
 	if(use_name_index): 
 		# check unused phrases?
-		not_used_names = check_usage(name_index,name_dict)
+		(used_names,not_used_names) = check_usage(name_index,name_dict)
 		for p in not_used_names:
 			unused_items += p+"\n"
 			print p, " name item not used!"
+		if (len(unused_items)>0): list2utffile(not_used_names,"unused_names.txt")
+		list2utffile(used_names,"used_names.txt")
 	else:
 		pass
 		#print "Not using name index"
@@ -1627,7 +1639,7 @@ def sortedDictValues(adict):
     keys.sort()
     return map(adict.get, keys)
 
-def mkcontent(alfile,content_file,filelist,jpeglist,jslist,headings,title,ver,uniq):
+def mkcontent(alfile,content_file,filelist,jpeglist,jslist,headings,title,ver,scr_ver,uniq):
 	PF = open(content_file,"w")
 	(file_defs,file_items) = mkitems(alfile,filelist,headings)
 	file_defs += mkjpglist(jpeglist)
@@ -1636,6 +1648,7 @@ def mkcontent(alfile,content_file,filelist,jpeglist,jslist,headings,title,ver,un
 	s = content_form.substitute( { 
 			'title' : title['title'], 
 			'ver' : ver,
+			'scr_ver' : scr_ver,
 			'author' : title['author'], 
 			'publisher' : title['publisher'], 
 			'uniq' : uniq,
@@ -1951,7 +1964,7 @@ def mknav(alfile,tfile,title,ver,content_list,filemap,filedict,lev_toc):
                                 for i in xrange(0,lev-1):	s += "</li>\n</ol>"
                             s += "</li>\n"
                         else:
-                            pass
+                            s += "</li>\n"
 		elif(k == 'wordref'):
 			s += addnavp_open(k,r,v,c)
 			c = c+1
@@ -2014,12 +2027,13 @@ def inc_dict(dict,k):
 # return list of non-used items
 def check_usage(ref,created):
 	not_used = []
+	used = []
 	for i in ref:
 		if i in created.keys():
-			pass
+			used.append(i)
 		else:
 			not_used.append(i)
-	return(not_used)
+	return(used,not_used)
 
 # non-used items but 1st transform keys in created to lowercase
 def check_usage_lowercase(ref,created):
@@ -2042,8 +2056,14 @@ def str2utffile(l,fn):
 
 def list2utffile(lis,fn):
 	PTMP = open(fn,"w")
-	for l in lis:
-		PTMP.write(l[0].encode('utf-8')+"\n")
+	if (len(lis)>1):
+		for l in lis:
+			PTMP.write(l.encode('utf-8')+"\n")
+	else:
+		try:
+			PTMP.write(lis[0].encode('utf-8')+"\n")
+		except:
+			print lis
 	PTMP.close()
 
 
@@ -2055,7 +2075,7 @@ def utffile2str(fn):
 		for l in b: s += l
 		b.close()
 	except:
-		pass
+		print "Couldn't open/find ",fn
 	return(s)
 
 def utffile2list(fn):
@@ -2065,7 +2085,7 @@ def utffile2list(fn):
 		for l in b: s.append(l.strip())
 		b.close()
 	except:
-		pass
+		print "Couldn't open/find ",fn
 	return(s)
 
 def mkgen(fn,content):
@@ -2330,28 +2350,36 @@ def rawfiles2html(flist,lev_break,Max_Lines):
 						if (mtc<0): mtc = 0
 
 						new_line = wrap_h("head"+str(tcQ), cap_line,lev)
-						# Strip paren and everything between
-						strp_line = aphrases.sub('',cap_line)
-                                                strp_line = capitalize_english(strp_line) #### NEW
 						if (start_paren.search(cap_line)):
+							# Strip paren and everything between
 							#print "line = ",cap_line
-							(eng,farsp) = cap_line.split("(",1)
+							(eng,farsp) = cap_line.rsplit("(",1)
+							#print eng,"------",farsp
 							#print "f = ",farsp
-							(fars,p) = farsp.split(")",1) # add ,1 for now!!!
+							(fars,p) = farsp.rsplit(")",1) # add ,1 for now!!!
 							sfarsi_list.append( (fars, mtc, tcQ) )
+							strp_line = capitalize_english(eng)
+						else:
+							strp_line = capitalize_english(cap_line)
+							#print "strp_line = ",strp_line
 						# Search for "The ..", move "The" to end of line for sorted
 						# content. i.e "The Self" becomes "Self, The"
 						tmpthe = the.match(strp_line)
 						if(tmpthe):
 							strp_line = the.sub('',strp_line)
-							strp_line += ",The"
+							strp_line = strp_line.rstrip()+", The"
 						
+						indefA = indef.match(strp_line)
+						if (indefA):
+							strp_line = indef.sub('',strp_line)
+							strp_line = strp_line.rstrip()+", A"
 							#new_line = cap_line
 
 						#print "Append to content list ",cap_line, mtc, tc, lev
                                                 #print "(1,2,3,4) = ",cap_line, mtc, tc, lev
 						content_list.append( (cap_line, mtc, tcQ, lev) )
 						scontent_list.append( (strp_line, mtc, tcQ) )
+
 						#kgentxt(cap_line+".txt",txt_content)
 						txt_content = ''
 						tcQ = tcQ+1
@@ -2416,8 +2444,10 @@ def rawfile2txt(f,author,title,levels):
 		if sfreg.match(line):	line = ''
 		# remove footnote references
 		line = frefs.sub("",line)
-		# remove leading %
-		line = npreg.sub("",line)
+		# remove line with leading %
+		#line = npreg.sub("",line)
+		if (npreg.match(line)): line = ''
+		if (atreg1.search(line)): line = ''
 		if (reg.match(line)):
 			# <\w>
 			sp = reg.match(line)
@@ -2529,7 +2559,10 @@ def biblio_abbrev(biblio_dict):
 		if (ok):
 			# Just use "last" name by splitting on ','
 			names = (biblio_dict[i]['author']).split(",")
-			abb[has_abbrev] = biblio_dict[i]['title'] + " : " + names[0]
+			titl = biblio_dict[i]['title']
+			words = titl.split()
+			abb[has_abbrev] = names[0] + " : "+ words[0]
+			#abb[has_abbrev] = biblio_dict[i]['title'] + " : " + names[0]
 	return(abb)
 
 ############################################
@@ -2728,6 +2761,7 @@ def create_sorted_contents(content_list,fileroot=""):
 
 	for l in content_list:
 		(lnk,atc,tc) = l
+		#print lnk,atc,tc
 		if (find_plus.search(lnk)):
 			print "Problem with processing, found ",sep_char, " in titles"
 		newlist.append(lnk+sep_char+"<p><a href=\""+fileroot+'%03d'%atc+".xhtml#head"+
@@ -2877,8 +2911,8 @@ def htmlize_footnotes(new_line,ftnlist,fnlist,marker,no_embed):
 	#print " footnote line", new_line
         fnn = save_fnn+1
         for fn in use_footnotes:
-		l = amprefs.sub("&amp;",fn)
-		l = frefs.sub("",l) # Remove dagger itself 
+		#l = amprefs.sub("&amp;",fn) # already done!
+		l = frefs.sub("",fn) # Remove dagger itself 
 		s = "<aside epub:type=\"footnote\" id=\"Foot"+str(fnn)
 		s = s+"\"><p class=\"popup\">"+l+"</p></aside>\n"
 		new_line += s
@@ -2940,7 +2974,7 @@ def htmlize_book_refs(new_line,aldict,abbrev_lookup,marker):
 	mr1 = book_refs1.findall(new_line)
 	if (mr1):
 		# assume only 1 match
-		print start_bold_red+"Exception case",mr1[0]+end_color
+		#print start_bold_red+"Exception case",mr1[0]+end_color
 		mrp = mr1[0]
 		try:
 			full_title = abbrev_lookup[mrp]
@@ -3077,6 +3111,7 @@ def italize_index(new_line,phr,phr_noparen,ldict,marker,no_embed):
 	for m in mf3: mf.append(pw.sub("",m))
 	mf = list(set(mf))
 	#print "final mf =",mf
+	
 
 	if (mf):
 		for p in phr:
@@ -3162,7 +3197,7 @@ def htmlize_name_index(new_line,index,ilink,marker,no_embed):
 # process metadata for book in JSON format & return
 #
 #---------------------------------------------------
-def title_proc(title,tfile,content,ver):
+def title_proc(title,tfile,content,ver,script_ver):
 	t = datetime.datetime.now()
 	if(len(title) > 0):
 		extra = title['rights'] + "<br />" + title['description']
@@ -3171,19 +3206,41 @@ def title_proc(title,tfile,content,ver):
 		# If title contains draft add version info
 		if (draft.search(title['title'])):
 			title['title'] = title['title']+" version "+ver
+
+		design = ""
+		trans  = ""
+		isbn  = ""
+		coverdesign = ""
+		coverphoto = ""
+		web = ""
+		publisher = ""
+		software = ""
+		if (title['translators']): trans = "Translators : "+title['translators']
+		if (title['design']): design = "Designed by : "+title['design']
+		if (title['revision']): ver = title['revision']+ver
+		if (title['cover design']): coverdesign = "Cover design : "+title['cover design']
+		if (title['cover photo']): coverphoto = "Cover Image : "+title['cover photo']
+		if (title['isbn']): isbn = "ISBN : "+title['isbn']
+		if (title['publisher']): publisher = "Published by : "+title['publisher']
+		# these not in older pyepub.cfg files
+		if (check_attr(title,'web')): web = "Website : "+title['web']
+		if (check_attr(title,'software')): software = "Generated using "+title['software']+" version "+script_ver
+
 		st = title_form.substitute( { 
 				'extra' : extra,
 				'title' : title['title'],
 				'author' : title['author'], 
-				'isbn' : title['isbn'], 
+				'isbn' : isbn, 
 				'copyright' : title['copyright'], 
-				'coverdesign' : title['cover design'], 
-				'design' : title['design'], 
-				'coverphoto' : title['cover photo'], 
-				'translators' : title['translators'], 
-				'publisher' : title['publisher'], 
+				'coverdesign' : coverdesign,
+				'design' : design,
+				'coverphoto' : coverphoto,
+				'translators' : trans,
+				'publisher' : publisher,
+				'web' : web, 
 				'ver' : ver,
 				'content' : content,
+				'software' : software,
 				'ver_type' : ver_type.decode('utf-8'),
 				"time" : t.strftime("%Y-%m-%d at %H:%M:%S"),
 				"css" : "css/main.css"} )
@@ -3356,6 +3413,12 @@ def process_pkg_file(fname,unzip_name):
 if __name__ == '__main__':
     if (len(sys.argv) > 1):
         fname = sys.argv[1]
+	script_path = os.path.dirname(os.path.realpath(__file__))
+	# Get version number of this script!!! 
+	if (os.path.isdir(script_path+"/.git")):
+		(status,script_ver) = commands.getstatusoutput("cd "+script_path+"; git rev-parse --short HEAD ")
+	else:
+		script_ver = '0'
         if (os.path.isfile(fname)):
 		iszip = re.compile(".pkg")
 		using_pkg = False
@@ -3374,6 +3437,7 @@ if __name__ == '__main__':
 		if ((using_pkg and cfg_name) or not using_pkg):
 			s = utffile2str(fname)
 			global_cfg = json.loads(s)
+			global_cfg['config'][2]['script_ver'] = script_ver
 			md_to_xhtml(global_cfg['config'])
 			try:
 				epubcheck_cmd = global_cfg['config'][1]['run_epubcheck']
@@ -3381,6 +3445,15 @@ if __name__ == '__main__':
 				print "Running Epubcheck...",cmd
 				(status,output) = commands.getstatusoutput(cmd)
 				print output
+
+				if (os.path.isdir(".git")):
+					x = commands.getstatusoutput('git shortlog -s')
+					ver_s = string.split(x[1])
+					ver = string.strip(ver_s[0])
+					orig_name = (global_cfg['config'][2]['output'])
+					fnames = orig_name.split(".epub")
+					output_filename = fnames[0]+"_"+ver+".epub"
+					commands.getstatusoutput("mv "+orig_name+" "+output_filename)
 				sys.exit(status)
 			except:
 				pass
