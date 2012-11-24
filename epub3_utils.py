@@ -891,11 +891,14 @@ debug = False
 
 def zip_files(dir, zip_file):
     os.chdir('efiles')
-    with zipfile.ZipFile(zip_file, 'w', compression=zipfile.ZIP_DEFLATED) as zip:
+    with zipfile.ZipFile(zip_file, 'w') as zip:
         for root, dirs, files in os.walk("."):
             for file in files:
                 fpath = os.path.join(root, file)
-                zip.write(fpath, compress_type=zipfile.ZIP_DEFLATED)
+		if (file == "mimetype"):
+			zip.write(fpath)
+		else:
+			zip.write(fpath, compress_type=zipfile.ZIP_DEFLATED)
     os.chdir('..')
 
 def check_attr(cfgd,name,filem=None):
